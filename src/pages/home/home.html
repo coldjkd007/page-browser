@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title >
+      Page Browser
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <button ion-button padding (click)="onPrevPage()" [disabled]="pageNo <= 1"> Previous Page</button>
+  <button ion-button padding (click)="onNextPage()" [disabled]="pageNo >= 10"> Next Page</button>
+  <button ion-button padding (click)="onClearPage()" [disabled]="pageBrowseHistories === undefined"> Clear</button>
+<hr>
+<p> Page No : {{pageNo}}</p>
+<hr>
+<!--  <ul class="list-group" *ngFor="let history of pageBrowseHistories">
+  <li class="list-group-item">Page : {{ history.pageNo }}  -- {{ history.browseTime }}</li>
+</ul>  -->
+
+<ion-grid>
+  <ion-row wrap>
+      <ion-col>
+        <strong>Page No</strong>  
+      </ion-col>
+      <ion-col>
+        <strong>Browse Time</strong>  
+        </ion-col>
+  </ion-row>
+  
+  <ion-row *ngFor="let history of pageBrowseHistories" wrap>
+    <ion-col>
+      {{ history.pageNo }}
+    </ion-col>
+    <ion-col>
+      {{ history.browseTime }}
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+
+</ion-content>
