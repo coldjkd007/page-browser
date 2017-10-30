@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {AlertController, LoadingController, NavController} from 'ionic-angular';
 import { ScriptService } from './script.service';
 
 
@@ -9,94 +9,105 @@ import { ScriptService } from './script.service';
 })
 export class HomePage implements OnInit{
 
-  pageNo:number=1;
+  pageNo:number=0;
   pageBrowseHistories:{
-    pageNo:number,
-    browseTime  :Date
+    location : { sequenceNo:number },
+    visitingTime:Date
   }[];
 
-  time:Date = new Date();
+  //time:Date = new Date();
 
-  
-  constructor(public navCtrl: NavController,private scriptService:ScriptService) {
+
+  constructor(public  navCtrl: NavController,
+              private scriptService:ScriptService,
+              private loadingCtrl:LoadingController,
+              private alertCtrl:AlertController) {
 
   }
 
   ngOnInit(): void {
-    this.scriptService.getPageHistory().subscribe(
+      this.loadPageBrowseHistories();
+  }
 
-      (history:any[])=>{
-        this.pageBrowseHistories = history;
+  onNextPage(){
+    this.pageNo++;
+    this.storePageBrowseHistories();
+    //this.loadPageBrowseHistories();
+  }
+
+  onPrevPage(){
+    this.pageNo--;
+    this.storePageBrowseHistories();
+   // this.loadPageBrowseHistories();
+  }
+
+  loadPageBrowseHistories(){
+    const loading = this.loadingCtrl.create({
+      content: 'Loading history from server ..'
+    });
+    loading.present();
+
+    this.scriptService.getPageHistory().subscribe(
+      (response)=>{
+        const data = response.json();
+        for(const history of data){
+          history.visitingTime= new Date(history.visitingTime);
+        }
+        this.pageBrowseHistories = data;
+        loading.dismiss();
+      },
+      (error)=>{
+        loading.dismiss();
+        const alert = this.alertCtrl.create({
+          title: 'Loading history from server failed!',
+          message: error.json().message,
+          buttons: ['Ok']
+        });
+        alert.present();
       }
     );
   }
 
-  onNextPage(){
-    //if(this.pageNo <10){
-      this.pageNo++;
-      this.scriptService.storePageHistory({pageNo:this.pageNo,browseTime:new Date()}).subscribe(
-        (response)=>{
-          console.log(response);
+  storePageBrowseHistories(){
+/*    const loading = this.loadingCtrl.create({
+      content: 'Saving into server ..'
+    });
+    loading.present();*/
 
-          this.scriptService.getPageHistory().subscribe(
-            
-                  (history:any[])=>{
-                    this.pageBrowseHistories = history;
-                  }
-                );
-        }
-      );
+    this.scriptService.storePageHistory({location : { sequenceNo : this.pageNo },visitingTime:new Date()}).subscribe(
+      (response)=>{
+        console.log(response);
+       // loading.dismiss();
+        this.loadPageBrowseHistories();
+
+      },
+      (error)=>{
+        console .log(error);
+        //loading .dismiss();
+        const alert = this.alertCtrl.create({
+          title: 'Saving into server failed!',
+          message: error.json().message,
+          buttons: ['Ok']
+        });
+        alert.present();
+      }
+    );
 
 
-
-   // }
   }
-
-  onPrevPage(){
-   // if(this.pageNo > 1){
-      this.pageNo--;
-      this.scriptService.storePageHistory({pageNo:this.pageNo,browseTime:new Date()}).subscribe(
-        (response)=>{
-
-    
-
-          console.log(response);
-
-          this.scriptService.getPageHistory().subscribe(
-            
-                  (history:any[])=>{
-                    this.pageBrowseHistories = history;
-                  }
-                );
-        }
-      );
-
-
-    }
-  //}
 
   onClearPage(){
     this.scriptService.deletePageHistory().subscribe(
       (response) => {
-        while(!response.ok){
-          
-                    }
+        while(!response.ok){}
         console.log(response);
+        this.loadPageBrowseHistories();
+      },
+      (error)=>{
 
-        this.scriptService.getPageHistory().subscribe(
-          
-                (history:any[])=>{
-                  this.pageBrowseHistories = history;
-                }
-              ) ;
       }
+
     );
-
-
-
-
   }
-
-  
 
 }

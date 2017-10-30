@@ -10,26 +10,15 @@ export class ScriptService{
 
 
     deletePageHistory(){
-        return this.http.delete('http://192.168.1.136:8080/scriptserver/webapi/pagehistory');
+        return this.http.delete('http://192.168.1.136:8080/scriptserver/webapi/servicehistory');
     }
 
-    storePageHistory(pagehistory: {pageNo:number,browseTime:Date}){
-        return this.http.post('http://192.168.1.136:8080/scriptserver/webapi/pagehistory',pagehistory);
+    storePageHistory(serviceRequest: {location : { sequenceNo:number }, visitingTime:Date}){
+        return this.http.post('http://192.168.1.136:8080/scriptserver/webapi/servicehistory',serviceRequest);
     }
-    
+
     getPageHistory(){
-        return this.http.get('http://192.168.1.136:8080/scriptserver/webapi/pagehistory/list').map(
-
-        (response:Response) =>{
-            const data = response.json();
-
-            for(const history of data){
-                history.browseTime= new Date(history.browseTime); 
-            }
-            return data;
-        }
-
-        );
+        return this.http.get('http://192.168.1.136:8080/scriptserver/webapi/servicehistory/list');
     }
 
 }

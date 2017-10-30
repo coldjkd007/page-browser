@@ -1,37 +1,65 @@
 <ion-header>
   <ion-navbar>
-    <ion-title >
-      Page Browser
+    <ion-title text-center>
+      BFT Service Requests
     </ion-title>
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <button ion-button padding (click)="onPrevPage()" [disabled]="pageNo <= 1"> Previous Page</button>
-  <button ion-button padding (click)="onNextPage()" [disabled]="pageNo >= 10"> Next Page</button>
-  <button ion-button padding (click)="onClearPage()" [disabled]="pageBrowseHistories === undefined"> Clear</button>
-<hr>
-<p> Page No : {{pageNo}}</p>
-<hr>
-<!--  <ul class="list-group" *ngFor="let history of pageBrowseHistories">
-  <li class="list-group-item">Page : {{ history.pageNo }}  -- {{ history.browseTime }}</li>
-</ul>  -->
+
 
 <ion-grid>
   <ion-row wrap>
-      <ion-col>
-        <strong>Page No</strong>  
-      </ion-col>
-      <ion-col>
-        <strong>Browse Time</strong>  
-        </ion-col>
-  </ion-row>
-  
-  <ion-row *ngFor="let history of pageBrowseHistories" wrap>
     <ion-col>
-      {{ history.pageNo }}
+      <button ion-button padding (click)="onPrevPage()" [disabled]="pageNo <= 1" block> Last Service </button>
     </ion-col>
     <ion-col>
-      {{ history.browseTime }}
+      <button ion-button padding (click)="onNextPage()" [disabled]="pageNo >= 6" block> Next Service </button>
+    </ion-col>
+    <ion-col>
+      <button ion-button padding (click)="onClearPage()" [disabled]="pageBrowseHistories === undefined" block> Clear</button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>
+      <p text-center> Sequence #: {{pageNo}}</p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row wrap>
+      <ion-col>
+        <strong>Sequence No</strong>
+      </ion-col>
+      <ion-col>
+        <strong>Latitude</strong>
+        </ion-col>
+    <ion-col>
+      <strong>Longitude</strong>
+    </ion-col>
+    <ion-col>
+      <strong>Location Name</strong>
+    </ion-col>
+    <ion-col>
+      <strong>Visit Time</strong>
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngFor="let history of pageBrowseHistories" wrap>
+    <ion-col>
+      {{ history.location.sequenceNo }}
+    </ion-col>
+    <ion-col>
+      {{ history.location.latitude }}
+    </ion-col>
+    <ion-col>
+      {{ history.location.longitude }}
+    </ion-col>
+    <ion-col>
+      {{ history.location.name }}
+    </ion-col>
+    <ion-col>
+      {{ history.visitingTime }}
     </ion-col>
   </ion-row>
 </ion-grid>
